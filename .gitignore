@@ -38,6 +38,11 @@ CodeCoverage/
 # MSBuild Binary and Structured Log
 *.binlog
 
+#Visual studio folders
+.vs
+*.vs
+*.csproj.user
+
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
