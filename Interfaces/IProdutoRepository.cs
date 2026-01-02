@@ -1,6 +1,12 @@
-﻿namespace produtoapi2.Interfaces;
+﻿using produtoapi2.Models;
+
+namespace produtoapi2.Interfaces;
 
 public interface IProdutoRepository
 {
-    //Aqui defineremos os metodos necessários para manipular os produtos que iremos expor da classe ProdutoRepository
+    void Add(Produto produto);
+    List<Produto> GetAll();
+    Produto? GetById(int id);
+    void Update(Produto produto);
+    void Delete(int id);
 }

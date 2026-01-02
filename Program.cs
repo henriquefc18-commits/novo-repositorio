@@ -1,15 +1,33 @@
+using Microsoft.EntityFrameworkCore;
+using produtoapi2.Data;
+using produtoapi2.Interfaces;
+using produtoapi2.Repository;
+using produtoapi2.Service;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-//exemplo de injeÁ„o de dependÍncia
-//builder.Services.AddSingleton<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseInMemoryDatabase("ProdutoDb"));
+
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+
+// ‚ÄúComo o EF Core InMemory n√£o usa migrations, foi necess√°rio chamar
+// EnsureCreated() para executar o seed definido no OnModelCreating.‚Äù
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.EnsureCreated();
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -37,7 +55,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapGet("/teste", () => new
     {
-        Menssagem = "API est· funcionando!",
+        Menssagem = "API estÔøΩ funcionando!",
         Timestamp = DateTime.Now,
         Swagger = "https://localhost:7207/swagger",
         Ambiente = app.Environment.EnvironmentName
