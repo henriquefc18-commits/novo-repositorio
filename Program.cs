@@ -8,8 +8,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//    options.UseInMemoryDatabase("ProdutoDb"));
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("ProdutoDb"));
+{
+    var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
+
+    options.UseMySql(
+        connectionString,
+        ServerVersion.AutoDetect(connectionString)
+    );
+});
 
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
@@ -23,11 +33,11 @@ var app = builder.Build();
 
 // “Como o EF Core InMemory não usa migrations, foi necessário chamar
 // EnsureCreated() para executar o seed definido no OnModelCreating.”
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.EnsureCreated();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    context.Database.EnsureCreated();
+//}
 
 if (app.Environment.IsDevelopment())
 {
